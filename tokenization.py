@@ -23,6 +23,7 @@ def preprocess_txt(text):
     text = text.replace(")", "") # Exclamation mark
     text = text.replace("-", " ") # Hyphen
     text = text.replace("/", " ") # Slash
+    text = text.replace("$", "") # Dollar sign
 
     return text
 
