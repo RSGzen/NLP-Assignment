@@ -159,58 +159,22 @@ def printResults(index, score_series, df):
         print(f"{i+1}. {movie_name} | Score: {similarity_percentage:.2f}%")
     print("-------------------")
 
-def recommending_movies(movie_description, df, num_results_per_time):
+def recommending_movies(movie_description):
     # Read saved preprocessed BagOfWords
     boW = readBoW_from_file("ori_BoW.json")
-    
-    num_results = num_results_per_time
 
     index, score_series = preprocessing_and_similarity_calculation(boW, movie_description)
 
-    printResults(index[0:num_results], score_series[0:num_results], df)
-    
-    while True:
-        loop_check = user_input_loop()
-        
-        if (loop_check):
-            num_results += num_results_per_time
+    return index, score_series
 
-            # If reaches the end of the dataset
-            if (num_results > 100):
-                print("\nReached end of results")
-                break
-
-            printResults(index[num_results-num_results_per_time: num_results], score_series[num_results-num_results_per_time: num_results], df)
-
-        else:
-            break
-
-def check_moviesName(movie_name_description, df, num_results_per_time):
+def check_moviesName(movie_name_description):
     
     # Read saved preprocessed movie names
     boW = readBoW_from_file("names_BoW.json")
 
     index, score_series = preprocessing_and_similarity_calculation(boW, movie_name_description)
-    
-    num_results = num_results_per_time
 
-    printResults(index[0:num_results], score_series[0:num_results], df)
-    
-    while True:
-        loop_check = user_input_loop()
-        
-        if (loop_check):
-            num_results += num_results_per_time
-
-            # If reaches the end of the dataset
-            if (num_results > 100):
-                print("\nReached end of results")
-                break
-            
-            printResults(index[num_results-num_results_per_time: num_results], score_series[num_results-num_results_per_time: num_results], df)
-
-        else:
-            break
+    return index, score_series
 
 class App():
     def __init__(self, window):
@@ -280,15 +244,25 @@ class App():
         self.option_button_2.pack(side = 'left', padx = 10, pady = 30)
         self.exit_button.pack(side = 'left', padx = 10, pady = 30)
     
-    def plot_description_search(self):
-        string = self.user_entry1.get()
+    def show_result(self, current_idx):
+        pass
 
-        
+    def plot_description_search(self):
+        user_string = self.user_entry1.get()
+
+        index, score_series = recommending_movies(user_string)
+
+        current_idx = 0
 
     def movie_name_search(self):
-        string = self.user_entry2.get()
+        user_string = self.user_entry2.get()
+
+        index, score_series = check_moviesName(user_string)
+
+        current_idx = 0
 
         
+
 
     # Function to encapsulate all GUI for predicting movie based on description
     def button_1_function(self):
