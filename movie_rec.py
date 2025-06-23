@@ -258,4 +258,5 @@ def main():
             case _:
                 print("\nInput incorrect. You can only enter numbers from 1 - 3.\nPlease try again.")
 
-main()
+if __name__ == "__main__":
+    main()
