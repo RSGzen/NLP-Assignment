@@ -245,7 +245,7 @@ def main():
                 recommending_movies(movie_description, df)
                 
             case 2:
-                print("\nEnter the description of a movie that you are searching for: ")
+                print("\nEnter the movie name that you are searching for: ")
                 
                 movie_name_description = input()
 
