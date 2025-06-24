@@ -148,17 +148,6 @@ def preprocessing_and_similarity_calculation(boW, movie_description):
 
     return index, score_series
 
-def printResults(index, score_series, df):
-    
-    print("\n-------------------")
-    for i in range(0, len(index)):
-
-        movie_name = df.iloc[index[i]]['Movie Name']
-        similarity_percentage = score_series[i] * 100
-
-        print(f"{i+1}. {movie_name} | Score: {similarity_percentage:.2f}%")
-    print("-------------------")
-
 def recommending_movies(movie_description):
     # Read saved preprocessed BagOfWords
     boW = readBoW_from_file("ori_BoW.json")
@@ -187,6 +176,12 @@ class App():
 
         # For saving dataset
         self.df = readCSV("cleanedAnimation.csv")
+
+        # For line drawing
+        self.canvas = None
+
+        # For result rendering
+        self.result_frame = None
 
         ## For Main Title
 
@@ -244,8 +239,71 @@ class App():
         self.option_button_2.pack(side = 'left', padx = 10, pady = 30)
         self.exit_button.pack(side = 'left', padx = 10, pady = 30)
     
-    def show_result(self, current_idx):
-        pass
+    def show_result(self, current_idx, max_movies_per_result, index, score_series):
+        
+        # If the line has been rendered 
+        if self.canvas != None:
+            self.canvas.destroy()
+        
+        if self.result_frame != None:
+            self.result_frame.destroy()
+        
+        # Create a border line
+        self.canvas = ctk.CTkCanvas(self.master,
+                               width = 1100,
+                               height = 50,
+                               bg = '#1b1e22',
+                               bd = 0,
+                               highlightthickness=0)
+        
+        self.canvas.pack()
+
+        self.canvas.create_line(0, 25, 1100, 25, fill='white', width=1)
+
+        self.result_frame = ctk.CTkFrame(self.master,
+                                         width = 1000,
+                                         height = 300,
+                                         fg_color='transparent')
+        
+        self.result_frame.pack(padx = 0, pady = 2)
+
+        result_font = ctk.CTkFont(family="System", size = 27)
+
+        current_row = 0
+
+        for i in range(current_idx, max_movies_per_result):
+            movie_label = ctk.CTkLabel(self.result_frame,
+                                              text = "Movie " + str(i+1) + ". ",
+                                              text_color = 'white',
+                                              font = result_font)
+
+            movie_name_text = self.df.iloc[index[i]]['Movie Name']
+
+            movie_name = ctk.CTkLabel(self.result_frame,
+                                      text = movie_name_text,
+                                      text_color = 'white',
+                                      font = result_font)
+            
+            movie_year_text = self.df.iloc[index[i]]['Year']
+
+            movie_year = ctk.CTkLabel(self.result_frame,
+                                      text = movie_year_text,
+                                      text_color = 'white',
+                                      font = result_font)
+            
+            similarity_percentage_text = str(round(score_series[i] * 100, 2)) + "% " + "similar"
+
+            similarity_percentage = ctk.CTkLabel(self.result_frame,
+                                                 text = similarity_percentage_text,
+                                                 text_color = 'white',
+                                                 font = result_font)
+
+            movie_label.grid(row = current_row, column = 0, padx = 5, pady = 10)
+            movie_name.grid(row = current_row, column = 1, padx = 35, pady = 10)
+            movie_year.grid(row = current_row, column = 2, padx = 20, pady = 10)
+            similarity_percentage.grid(row = current_row, column = 3, padx = 30, pady = 10)
+
+            current_row += 1
 
     def plot_description_search(self):
         user_string = self.user_entry1.get()
@@ -254,6 +312,8 @@ class App():
 
         current_idx = 0
 
+        self.show_result(current_idx, 5, index, score_series)
+
     def movie_name_search(self):
         user_string = self.user_entry2.get()
 
@@ -261,8 +321,7 @@ class App():
 
         current_idx = 0
 
-        
-
+        self.show_result(current_idx, 5, index, score_series)
 
     # Function to encapsulate all GUI for predicting movie based on description
     def button_1_function(self):
@@ -281,7 +340,7 @@ class App():
             self.user_entry1 = ctk.CTkEntry(window,
                                     width=908,
                                     height=100,
-                                    placeholder_text="Enter plot description to find a movie:",
+                                    placeholder_text="Enter description (genre, year, plot, director, stars):",
                                     font=function1_font)
             
             self.user_entry1.pack(padx = 0, pady = 2)
@@ -305,6 +364,14 @@ class App():
             self.user_entry1.destroy()
 
             self.search_button1.destroy()
+
+            if self.canvas != None:
+                self.canvas.destroy()
+                self.canvas = None
+
+            if self.result_frame != None:
+                self.result_frame.destroy()
+                self.result_frame = None
         
         if (current_button_color == self.button_unpressed_color) and (other_button_color == self.button_pressed_color):
 
@@ -314,12 +381,20 @@ class App():
             self.user_entry2.destroy()
             self.search_button2.destroy()
 
+            if self.canvas != None:
+                self.canvas.destroy()
+                self.canvas = None
+
+            if self.result_frame != None:
+                self.result_frame.destroy()
+                self.result_frame = None
+
             function1_font = ctk.CTkFont(family="System", size=25)
 
             self.user_entry1 = ctk.CTkEntry(window,
                                     width=908,
                                     height=100,
-                                    placeholder_text="Enter plot description to find a movie:",
+                                    placeholder_text="Enter description (genre, year, plot, director, stars):",
                                     font=function1_font)
             
             self.user_entry1.pack(padx = 0, pady = 2)
@@ -374,6 +449,14 @@ class App():
             self.user_entry2.destroy()
 
             self.search_button2.destroy()
+
+            if self.canvas != None:
+                self.canvas.destroy()
+                self.canvas = None
+
+            if self.result_frame != None:
+                self.result_frame.destroy()
+                self.result_frame = None
         
         if (current_button_color == self.button_unpressed_color) and (other_button_color == self.button_pressed_color):
 
@@ -382,6 +465,14 @@ class App():
 
             self.user_entry1.destroy()
             self.search_button1.destroy()
+
+            if self.canvas != None:
+                self.canvas.destroy()
+                self.canvas = None
+
+            if self.result_frame != None:
+                self.result_frame.destroy()
+                self.result_frame = None
 
             function1_font = ctk.CTkFont(family="System", size=25)
 
