@@ -101,32 +101,6 @@ def index_extraction(similarity_row):
 
     return index, score_series
 
-# Check whether user is satisfied with the results or want to see other results
-def user_input_loop():
-    
-    while True:
-        print("\nIs this what you are looking for?\n1. Yes\n2. I would like to see other results\nChoice: ");
-
-        user_input = input()
-
-        # Check if user input contains digit
-        if (user_input.isdigit() == False):
-            print("\nError. You can only enter digits.")
-            continue
-
-        user_num = int(user_input)
-
-        match user_num:
-            
-            case 1:    
-                return False;
-                
-            case 2:
-                return True;
-
-            case _:
-                print("\nInput incorrect. You can only enter numbers of 1 or 2.\nPlease try again.")
-
 # Preprocess user input and include in boW for similarity calculation
 # Returns similarity scores and descending index
 def preprocessing_and_similarity_calculation(boW, movie_description):
