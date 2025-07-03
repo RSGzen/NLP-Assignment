@@ -7,6 +7,7 @@ import re
 import contractions
 import emoji
 import json
+import nltk
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -22,6 +23,16 @@ def readCSV(csvName):
     df = pd.read_csv(csv_path)
 
     return df
+
+def download_nltk_data():
+    # For tokenization
+    nltk.download('punkt')
+
+    # For removing stopwords
+    nltk.download('stopwords')
+
+    # For lemmatization
+    nltk.download('wordnet')
 
 def preprocess_text(text_str: str):
 
@@ -469,9 +480,11 @@ class App():
             self.search_button2.pack(padx = 100, pady = 4)
 
 if __name__ == "__main__":
+    download_nltk_data()
+    
     # Window for GUI
     window = ctk.CTk()
-    
+
     application = App(window)
 
     window.mainloop()
